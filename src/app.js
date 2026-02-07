@@ -4,8 +4,8 @@ dotenv.config()
 import express from "express"
 import cookieParser from "cookie-parser"
 
-// import path from "path"
-// import { fileURLToPath } from "url"
+import path from "path"
+import { fileURLToPath } from "url"
 
 // imports routes
 import userRouter from "./routes/users.route.js"
@@ -21,8 +21,8 @@ import passport from "passport"
 
 // filename toma el directorio del archivo ej: C:\Entrega2\src\app.js
 // dirname toma la carpeta del directorio del archivo ej: C:\proyectos\miapp\src
-// const __filename = fileURLToPath(import.meta.url)
-// const __dirname = path.dirname(__filename)
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const app = express()
 const PORT = process.env.PORT || 1234
@@ -31,6 +31,9 @@ const PORT = process.env.PORT || 1234
 
 // Para uso de cookies
 app.use(cookieParser(process.env.COOKIE_SECRET))
+
+// Para servir archivos estaticos en http
+app.use(express.static(path.join(__dirname, "public")))
 
 // middleware para poder trabajar con datos JSON
 app.use(express.json())
