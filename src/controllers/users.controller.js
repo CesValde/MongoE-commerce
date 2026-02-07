@@ -70,7 +70,6 @@ export const updateUser = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
    try {
-      console.log(1)
       const { password } = req.body
       const id = req.user.id
 
