@@ -17,22 +17,8 @@ class UsersDAO {
       return await userModel.insertMany(users)
    }
 
-   async update(id, first_name, last_name, email, password, age, role) {
-      return await userModel.findByIdAndUpdate(
-         id,
-         {
-            first_name,
-            last_name,
-            email,
-            password,
-            age,
-            role
-         },
-         {
-            new: true,
-            runValidators: true
-         }
-      )
+   async update(id, data, options) {
+      return await userModel.findByIdAndUpdate(id, data, options)
    }
 
    async delete(id) {
