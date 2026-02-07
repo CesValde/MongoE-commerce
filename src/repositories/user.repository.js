@@ -23,16 +23,7 @@ class UserRepository {
    }
 
    async update(id, data, options) {
-      console.log(3)
-
-      console.log(id)
-      console.log(data)
-      console.log(options)
-
-
-
       const updatedUser = await userDAO.update(id, data, options)
-      console.log(updatedUser)
       return userDTO.fromDB(updatedUser)
    }
 
