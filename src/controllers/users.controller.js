@@ -1,4 +1,5 @@
 import userServices from "../services/users.service.js"
+import bcrypt from "bcrypt"
 
 export const getAllUsers = async (req, res) => {
    try {
@@ -55,6 +56,7 @@ export const updateUser = async (req, res) => {
          age,
          role
       )
+
       return res.status(200).json({
          message: "User update successfully",
          user
@@ -63,6 +65,24 @@ export const updateUser = async (req, res) => {
       return res.status(error.statusCode || 500).json({
          error: error.statusCode ? error.message : "Internal server error"
       })
+   }
+}
+
+export const resetPassword = async (req, res) => {
+   try {
+      console.log(1)
+      const { password } = req.body
+      const id = req.user.id
+
+      const hash = await bcrypt.hash(password, 10)
+      const user = await userServices.resetPassword(id, hash)
+
+      return res.status(200).json({
+         message: "Password update successfully",
+         user
+      })
+   } catch (error) {
+      res.status(500).json({ error: "Error" })
    }
 }
 
