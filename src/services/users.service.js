@@ -71,28 +71,26 @@ class UserServices {
 
    async update(id, first_name, last_name, email, password, age, role) {
       try {
-         if (
-            !first_name ||
-            !last_name ||
-            !email ||
-            !password ||
-            !age ||
-            !role
-         ) {
-            throw new AppError("Missing values", 400)
+         const updateData = {}
+
+         if (first_name) updateData.first_name = first_name
+         if (last_name) updateData.last_name = last_name
+         if (email) updateData.email = email
+         if (age) updateData.age = age
+         if (role) updateData.role = role
+
+         if (password) {
+            updateData.password = await bcrypt.hash(password, 10)
          }
 
-         const hash = await bcrypt.hash(password, 10)
+         if (Object.keys(updateData).length === 0) {
+            throw new AppError("No data to update", 400)
+         }
 
-         const updatedUser = await userRepository.update(
-            id,
-            first_name,
-            last_name,
-            email,
-            hash,
-            age,
-            role
-         )
+         const updatedUser = await userRepository.update(id, updateData, {
+            new: true,
+            runValidators: true
+         })
 
          if (!updatedUser) {
             throw new AppError("User not found", 404)
@@ -100,6 +98,7 @@ class UserServices {
 
          return updatedUser
       } catch (error) {
+         console.log(error)
          if (error instanceof AppError) throw error
          throw new AppError("Database error", 500)
       }
@@ -120,7 +119,7 @@ class UserServices {
       }
    }
 
-   // login 
+   // login
    async login(email, password) {
       try {
          if (!email || !password) {
@@ -136,6 +135,30 @@ class UserServices {
          }
 
          return user
+      } catch (error) {
+         if (error instanceof AppError) throw error
+         throw new AppError("Database error", 500)
+      }
+   }
+
+   // reset password
+   async resetPassword(id, hash) {
+      try {
+         console.log(2)
+
+         const updatedUser = await userRepository.update(
+            id,
+            { password: hash },
+            { new: true, runValidators: true }
+         )
+
+         if (!updatedUser) {
+            throw new AppError("User not found", 404)
+         }
+
+         console.log(updatedUser)
+
+         return updatedUser
       } catch (error) {
          if (error instanceof AppError) throw error
          throw new AppError("Database error", 500)
