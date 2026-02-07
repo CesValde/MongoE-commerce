@@ -25,6 +25,12 @@ router.post(
    userController.saveUser
 )
 
+router.post(
+   "/reset-password",
+   passportCall("jwt"),
+   userController.resetPassword
+)
+
 router.put(
    "/:uid",
    passportCall("jwt"),
