@@ -1,10 +1,7 @@
-import { Router } from "express"
 import path from "path"
 import fs from "fs"
 import { fileURLToPath } from "url"
 import { createMailer } from "../config/mailer.js"
-
-const router = Router()
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -15,30 +12,40 @@ const readTemplate = (nameTemplate) => {
 }
 
 // Envía un email simple, fijo y de texto plano a un destinatario hardcodeado.
-/* export const sendMail = async (req, res) => {
-   const to = "usuario@mail.com"
+export const sendMail = async (req, res) => {
+   const user = req.user
+   const { email, first_name } = user
+
    try {
+      const resetLink = `http://localhost:8000/api/notify/change-password`
       const transporter = createMailer()
+
       const info = await transporter.sendMail({
-         from: `${process.env.MAIL_USER} "APP Coder"`,
-         to: to,
-         subject: "Confirmación de Compra",
-         text: "Estimado Cliente, confirmamos tu compra" // Plain-text version of the message
-         // html: "<b>Hello world?</b>", // HTML version of the message
+         from: `${process.env.MAIL_USER} "MongoE-commerce"`,
+         to: email,
+         subject: "Change password",
+         text: `Hi ${first_name},
+
+         To change your password, click on the following link:
+         ${resetLink}
+
+         If you did not request this change, please ignore this message.`
       })
-      console.log("Mensaje Enviado:", info.messageId)
+
+      console.log("Message send:", info.messageId)
       res.json({ status: "ok" })
    } catch (error) {
       console.error({ error })
       res.status(500).json({
          status: "error",
-         message: "No se pudo enviar el Mail"
+         message: "The email could not be sent."
       })
    }
-} */
+}
 
-// usar este
-export const sendMail2 = async (req, res) => {
+/*
+// later see if i use it
+export const sendMailBuyConfirm = async (req, res) => {
    const { to, name = "cliente", product = "Producto" } = req.body
 
    try {
@@ -58,7 +65,7 @@ export const sendMail2 = async (req, res) => {
          to: to,
          subject: `Confirmación de Compra ${product}`,
          html: htmlBase
-         /* attachments: [
+         attachments: [
             {
                filename: "logo.png",
                path: path.join(__dirname, "..", "..", "assets", "logo.png"),
@@ -68,7 +75,7 @@ export const sendMail2 = async (req, res) => {
                filename: "manual.pdf",
                path: path.join(__dirname, "..", "..", "assets", "apunte.pdf")
             }
-         ] */
+         ] 
       })
       console.log("Mensaje Enviado:", info.messageId)
       res.json({ status: "ok" })
@@ -81,4 +88,4 @@ export const sendMail2 = async (req, res) => {
    }
 }
 
-export default router
+*/
