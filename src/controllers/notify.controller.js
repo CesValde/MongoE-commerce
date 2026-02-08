@@ -2,6 +2,8 @@ import path from "path"
 import fs from "fs"
 import { fileURLToPath } from "url"
 import { createMailer } from "../config/mailer.js"
+import crypto from "crypto"
+import userServices from "../services/users.service.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -13,11 +15,22 @@ const readTemplate = (nameTemplate) => {
 
 // Envía un email simple, fijo y de texto plano a un destinatario hardcodeado.
 export const sendMail = async (req, res) => {
-   const user = req.user
-   const { email, first_name } = user
+   const { email, first_name, id } = req.user
 
    try {
-      const resetLink = `http://localhost:8000/api/notify/change-password`
+      const token = crypto.randomBytes(32).toString("hex")
+      const hashedToken = crypto
+         .createHash("sha256")
+         .update(token)
+         .digest("hex")
+
+      await userServices.update(id, {
+         resetPasswordToken: hashedToken,
+         resetPasswordExpires: Date.now() + 60 * 60 * 1000 // 1h
+         //resetPasswordExpires: Date.now() + 2 * 60 * 1000 // 2m
+      })
+
+      const resetLink = `http://localhost:8000/api/notify/change-password/${token}`
       const transporter = createMailer()
 
       const info = await transporter.sendMail({
