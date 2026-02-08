@@ -30,6 +30,10 @@ class UserRepository {
    async delete(id) {
       return userDAO.delete(id)
    }
+
+   async getByResetToken(token) {
+      return userDAO.getByResetToken(token)
+   }
 }
 
 export default new UserRepository()
