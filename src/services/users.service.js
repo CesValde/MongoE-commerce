@@ -69,25 +69,18 @@ class UserServices {
       }
    }
 
-   async update(id, first_name, last_name, email, password, age, role) {
+   async update(id, data) {
       try {
-         const updateData = {}
-
-         if (first_name) updateData.first_name = first_name
-         if (last_name) updateData.last_name = last_name
-         if (email) updateData.email = email
-         if (age) updateData.age = age
-         if (role) updateData.role = role
-
-         if (password) {
-            updateData.password = await bcrypt.hash(password, 10)
-         }
-
-         if (Object.keys(updateData).length === 0) {
+         if (!data || Object.keys(data).length === 0) {
             throw new AppError("No data to update", 400)
          }
 
-         const updatedUser = await userRepository.update(id, updateData, {
+         // if password comming reject the request
+         if (data.password) {
+            throw new AppError("Password cannot be updated here", 400)
+         }
+
+         const updatedUser = await userRepository.update(id, data, {
             new: true,
             runValidators: true
          })
@@ -142,23 +135,34 @@ class UserServices {
    }
 
    // reset password
-   async resetPassword(id, hash) {
+   async resetPassword(hashedToken, newPassword) {
       try {
-         console.log(2)
+         console.log(4)
+         const user = await userRepository.getByResetToken(hashedToken)
 
-         const updatedUser = await userRepository.update(
-            id,
-            { password: hash },
-            { new: true, runValidators: true }
-         )
-
-         if (!updatedUser) {
-            throw new AppError("User not found", 404)
+         if (!user || user.resetPasswordExpires < Date.now()) {
+            throw new AppError("Token invalid or expired", 400)
          }
 
-         console.log(updatedUser)
+         // compare passwords
+         const isSamePassword = await bcrypt.compare(newPassword, user.password)
 
-         return updatedUser
+         if (isSamePassword) {
+            throw new AppError(
+               "New password must be different from current password",
+               400
+            )
+         }
+
+         const newHash = await bcrypt.hash(newPassword, 10)
+
+         await userRepository.update(user._id, {
+            password: newHash,
+            resetPasswordToken: undefined,
+            resetPasswordExpires: undefined
+         })
+
+         return true
       } catch (error) {
          if (error instanceof AppError) throw error
          throw new AppError("Database error", 500)
