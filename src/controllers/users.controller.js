@@ -1,5 +1,5 @@
 import userServices from "../services/users.service.js"
-import bcrypt from "bcrypt"
+import crypto from "crypto"
 
 export const getAllUsers = async (req, res) => {
    try {
@@ -44,18 +44,10 @@ export const saveUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
    const { uid } = req.params
-   const { first_name, last_name, email, password, age, role } = req.body
+   const data = req.body
 
    try {
-      const user = await userServices.update(
-         uid,
-         first_name,
-         last_name,
-         email,
-         password,
-         age,
-         role
-      )
+      const user = await userServices.update(uid, data)
 
       return res.status(200).json({
          message: "User update successfully",
@@ -70,18 +62,22 @@ export const updateUser = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
    try {
+      const { token } = req.params
       const { password } = req.body
-      const id = req.user.id
 
-      const hash = await bcrypt.hash(password, 10)
-      const user = await userServices.resetPassword(id, hash)
+      const hashedToken = crypto
+         .createHash("sha256")
+         .update(token)
+         .digest("hex")
 
-      return res.status(200).json({
-         message: "Password update successfully",
-         user
-      })
+      await userServices.resetPassword(hashedToken, password)
+
+      res.json({ message: "Password updated successfully" })
    } catch (error) {
-      res.status(500).json({ error: "Error" })
+      res.status(error.statusCode || 500).json({
+         error: error.message || "Error resetting password"
+      })
+      console.log(error)
    }
 }
 
