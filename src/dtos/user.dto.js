@@ -8,7 +8,9 @@ class UserDTO {
          fullName: `${user.first_name} ${user.last_name}`,
          email: user.email,
          age: user.age,
-         role: user.role
+         role: user.role,
+         resetPasswordToken: user.resetPasswordToken,
+         resetPasswordExpires: user.resetPasswordExpires
       }
    }
 
@@ -23,5 +25,5 @@ class UserDTO {
       }
    }
 }
- 
+
 export default UserDTO

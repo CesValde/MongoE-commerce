@@ -25,6 +25,15 @@ class UsersDAO {
       return await userModel.findByIdAndDelete(id)
       // await usersDAO.deleteOne({ _id: id })
    }
+
+   async getByResetToken(token) {
+      return await userModel
+         .findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() }
+         })
+         .select("+password")
+   }
 }
 
 export default new UsersDAO()
