@@ -13,8 +13,8 @@ class UsersDAO {
       return await userModel.findById(id)
    }
 
-   async create(users) {
-      return await userModel.insertMany(users)
+   async create(user) {
+      return await userModel.create(user)
    }
 
    async update(id, data, options) {
@@ -23,7 +23,6 @@ class UsersDAO {
 
    async delete(id) {
       return await userModel.findByIdAndDelete(id)
-      // await usersDAO.deleteOne({ _id: id })
    }
 
    async getByResetToken(token) {
