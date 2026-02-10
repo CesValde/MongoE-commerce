@@ -27,10 +27,9 @@ export const getUserById = async (req, res) => {
 
 export const saveUser = async (req, res) => {
    const data = req.body
-   const arr = Array.isArray(data) ? data : [data]
 
    try {
-      const user = await userServices.create(arr)
+      const user = await userServices.create(data)
       return res.status(201).json({
          message: "User created successfully",
          user
@@ -86,7 +85,7 @@ export const deleteUser = async (req, res) => {
 
    try {
       const user = await userServices.delete(uid)
-      return res.status(204).json({
+      return res.status(200).json({
          message: "User delete successfully",
          user
       })
