@@ -1,23 +1,21 @@
-// dtos/user.dto.js
 class UserDTO {
    static fromDB(user) {
       if (!user) return null
 
       return {
          id: user._id.toString(),
-         fullName: `${user.first_name} ${user.last_name}`,
+         first_name: user.first_name,
+         last_name: user.last_name,
          email: user.email,
          age: user.age,
-         role: user.role,
-         resetPasswordToken: user.resetPasswordToken,
-         resetPasswordExpires: user.resetPasswordExpires
+         role: user.role
       }
    }
 
    static toDB(data) {
       return {
-         first_name: data.firstName,
-         last_name: data.lastName,
+         first_name: data.first_name,
+         last_name: data.last_name,
          email: data.email,
          password: data.password,
          age: data.age,
