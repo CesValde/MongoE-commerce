@@ -8,7 +8,8 @@ class UserDTO {
          last_name: user.last_name,
          email: user.email,
          age: user.age,
-         role: user.role
+         role: user.role,
+         cart: user.cart
       }
    }
 
@@ -19,7 +20,8 @@ class UserDTO {
          email: data.email,
          password: data.password,
          age: data.age,
-         role: data.role ?? "user"
+         role: data.role ?? "user",
+         cart: data.cart
       }
    }
 }
