@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import AppError from "../error/error.js"
 import productsRepository from "../repositories/products.repository.js"
+import ProductDTO from "../dtos/product.dto.js"
 
 export class ProductServices {
    // Obtiene los productos de la base de datos

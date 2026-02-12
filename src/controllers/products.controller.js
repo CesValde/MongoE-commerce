@@ -3,8 +3,13 @@ import ProductDTO from "../dtos/product.dto.js"
 
 export const getAllProducts = async (req, res) => {
    try {
-      const products = await productsServices.getAll()
-      return res.status(200).json(products.map(ProductDTO.fromDB))
+      const products = await productsServices.getAll(req.query)
+      const payload = products.payload.map(ProductDTO.fromDB)
+
+      return res.status(200).json({
+         ...products,
+         payload
+      })
    } catch (error) {
       return res.status(error.statusCode || 500).json({
          error: error.statusCode ? error.message : "Internal server error"
@@ -47,13 +52,15 @@ export const updateProduct = async (req, res) => {
 
    try {
       const product = await productsServices.update(pid, data)
-      const productDTO = productDTO.fromDB(product)
+      const productUpdate = ProductDTO.fromDB(product)
 
       return res.status(200).json({
          message: "Product update successfully",
-         productDTO
+         productUpdate
       })
    } catch (error) {
+      console.log(error)
+
       return res.status(error.statusCode || 500).json({
          error: error.statusCode ? error.message : "Internal server error"
       })
@@ -65,11 +72,11 @@ export const deleteProduct = async (req, res) => {
 
    try {
       const product = await productsServices.delete(pid)
-      const productDTO = productDTO.fromDB(product)
+      const productDelete = ProductDTO.fromDB(product)
 
       return res.status(200).json({
          message: "Product delete successfully",
-         productDTO
+         productDelete
       })
    } catch (error) {
       return res.status(error.statusCode || 500).json({
