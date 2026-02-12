@@ -32,9 +32,11 @@ export const saveUser = async (req, res) => {
 
    try {
       const user = await userServices.create(data)
+      const userCreate = UserDTO.fromDB(user)
+
       return res.status(201).json({
          message: "User created successfully",
-         user
+         userCreate
       })
    } catch (error) {
       return res.status(error.statusCode || 500).json({
