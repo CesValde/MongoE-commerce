@@ -14,6 +14,7 @@ import sessionRouter from "./routes/session.route.js"
 import notifyRouter from "./routes/notify.route.js"
 import productsRouter from "./routes/products.route.js"
 import cartsRouter from "./routes/carts.route.js"
+import ticketRouter from "./routes/tickets.route.js"
 
 // config server
 import { connectAtlasMongoDB } from "./config/auth.config.js"
@@ -54,8 +55,9 @@ async function startServer() {
       app.use("/api/users", userRouter)
       app.use("/api/session", sessionRouter)
       app.use("/api/notify", notifyRouter)
-      app.use("/api/products", productsRouter)  
+      app.use("/api/products", productsRouter)
       app.use("/api/carts", cartsRouter)
+      app.use("/api/tickets", ticketRouter)
 
       app.listen(PORT, () => console.log(`Entrega1 http://localhost:${PORT}`))
    } catch (err) {
