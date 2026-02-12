@@ -1,30 +1,24 @@
 import userDAO from "../daos/user.dao.js"
-import userDTO from "../dtos/user.dto.js"
 
 class UserRepository {
    async getAll() {
-      const users = await userDAO.getAll()
-      return users.map(userDTO.fromDB)
+      return await userDAO.getAll()
    }
 
    async getById(id) {
-      const user = await userDAO.getById(id)
-      return userDTO.fromDB(user)
+      return await userDAO.getById(id)
    }
 
    async getByEmail(email) {
-      return userDAO.getByEmail(email) // password solo para auth
+      return userDAO.getByEmail(email)
    }
 
    async create(data) {
-      const userToCreate = userDTO.toDB(data)
-      const createdUser = await userDAO.create(userToCreate)
-      return userDTO.fromDB(createdUser)
+      return await userDAO.create(data)
    }
 
    async update(id, data, options) {
-      const updatedUser = await userDAO.update(id, data, options)
-      return userDTO.fromDB(updatedUser)
+      return await userDAO.update(id, data, options)
    }
 
    async delete(id) {

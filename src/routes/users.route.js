@@ -1,48 +1,19 @@
 import { Router } from "express"
-import { authorization, passportCall } from "../middleware/auth.middleware.js"
+import { passportCall } from "../middleware/auth.middleware.js"
 import * as userController from "../controllers/users.controller.js"
 
 const router = Router()
 
-router.get(
-   "/",
-   passportCall("jwt"),
-   authorization("admin"),
-   userController.getAllUsers
-)
+router.get("/", passportCall("current"), userController.getAllUsers)
 
-router.get(
-   "/:uid",
-   passportCall("jwt"),
-   authorization("admin"),
-   userController.getUserById
-)
+router.get("/:uid", passportCall("current"), userController.getUserById)
 
-router.post(
-   "/",
-   passportCall("jwt"),
-   authorization("admin"),
-   userController.saveUser
-)
+router.post("/", passportCall("current"), userController.saveUser)
 
-router.post(
-   "/reset-password/:token",
-   passportCall("jwt"),
-   userController.resetPassword
-)
+router.post("/reset-password/:token", userController.resetPassword)
 
-router.put(
-   "/:uid",
-   passportCall("jwt"),
-   authorization("admin"),
-   userController.updateUser
-)
+router.put("/:uid", passportCall("current"), userController.updateUser)
 
-router.delete(
-   "/:uid",
-   passportCall("jwt"),
-   authorization("admin"),
-   userController.deleteUser
-)
+router.delete("/:uid", passportCall("current"), userController.deleteUser)
 
 export default router

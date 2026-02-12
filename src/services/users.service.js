@@ -14,7 +14,7 @@ class UserServices {
 
    async getByEmail(email) {
       try {
-         const user = await userRepository.getByEmail(email) //.select("+password")
+         const user = await userRepository.getByEmail(email)
 
          if (!user) {
             throw new AppError("User not found", 404)
@@ -68,7 +68,6 @@ class UserServices {
          const userCreate = await userRepository.create(userToCreate)
          return userCreate
       } catch (error) {
-         console.log(error)
          if (error instanceof AppError) throw error
          throw new AppError("Database error", 500)
       }

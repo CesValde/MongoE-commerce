@@ -1,11 +1,13 @@
 import userServices from "../services/users.service.js"
+import UserDTO from "../dtos/user.dto.js"
 import crypto from "crypto"
 
 export const getAllUsers = async (req, res) => {
    try {
       const users = await userServices.getAll()
-      return res.status(200).json(users)
+      return res.status(200).json(users.map(UserDTO.fromDB))
    } catch (error) {
+      console.log(error)
       return res.status(error.statusCode || 500).json({
          error: error.statusCode ? error.message : "Internal server error"
       })
@@ -17,7 +19,7 @@ export const getUserById = async (req, res) => {
 
    try {
       const user = await userServices.getById(uid)
-      return res.status(200).json(user)
+      return res.status(200).json(UserDTO.fromDB(user))
    } catch (error) {
       return res.status(error.statusCode || 500).json({
          error: error.statusCode ? error.message : "Internal server error"
@@ -47,10 +49,11 @@ export const updateUser = async (req, res) => {
 
    try {
       const user = await userServices.update(uid, data)
+      const userDTO = UserDTO.fromDB(user)
 
       return res.status(200).json({
          message: "User update successfully",
-         user
+         userDTO
       })
    } catch (error) {
       return res.status(error.statusCode || 500).json({
@@ -76,7 +79,6 @@ export const resetPassword = async (req, res) => {
       res.status(error.statusCode || 500).json({
          error: error.message || "Error resetting password"
       })
-      console.log(error)
    }
 }
 
@@ -85,9 +87,11 @@ export const deleteUser = async (req, res) => {
 
    try {
       const user = await userServices.delete(uid)
+      const userDTO = UserDTO.fromDB(user)
+
       return res.status(200).json({
          message: "User delete successfully",
-         user
+         userDTO
       })
    } catch (error) {
       return res.status(error.statusCode || 500).json({
