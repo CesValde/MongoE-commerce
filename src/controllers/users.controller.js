@@ -49,11 +49,11 @@ export const updateUser = async (req, res) => {
 
    try {
       const user = await userServices.update(uid, data)
-      const userDTO = UserDTO.fromDB(user)
+      const userUpdate = UserDTO.fromDB(user)
 
       return res.status(200).json({
          message: "User update successfully",
-         userDTO
+         userUpdate
       })
    } catch (error) {
       return res.status(error.statusCode || 500).json({
@@ -87,11 +87,11 @@ export const deleteUser = async (req, res) => {
 
    try {
       const user = await userServices.delete(uid)
-      const userDTO = UserDTO.fromDB(user)
+      const userDelete = UserDTO.fromDB(user)
 
       return res.status(200).json({
          message: "User delete successfully",
-         userDTO
+         userDelete
       })
    } catch (error) {
       return res.status(error.statusCode || 500).json({
