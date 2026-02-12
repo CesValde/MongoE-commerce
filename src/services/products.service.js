@@ -34,8 +34,6 @@ export class ProductServices {
          const options = {
             page: Number(page),
             limit: Number(limit),
-            /* page,
-            limit, */
             lean: true,
             sort:
                sort === "asc"
@@ -45,11 +43,7 @@ export class ProductServices {
                     : {}
          }
 
-         console.log(2)
-
          const result = await productsRepository.paginate(filter, options)
-
-         console.log(result)
 
          return {
             status: "success",
@@ -71,18 +65,15 @@ export class ProductServices {
    async getById(pid) {
       try {
          if (!mongoose.Types.ObjectId.isValid(pid)) {
-            return { status: "error", error: "Invalid product ID format" }
+            throw new AppError(`Invalid product ${pid} format`, 404)
          }
 
-         const product = await productsModel.findById(pid)
+         const product = await productsRepository.getById(pid)
          if (!product) {
-            return {
-               status: "error",
-               error: `Product with id ${pid} not found`
-            }
+            throw new AppError(`Product with id ${pid} not found`, 404)
          }
 
-         return { status: "success", payload: product }
+         return product
       } catch (error) {
          if (error instanceof AppError) throw error
          throw new AppError("Database error", 500)
@@ -113,7 +104,7 @@ export class ProductServices {
             !category ||
             !thumbnails
          ) {
-            return { status: "error", error: "Missing values" }
+            throw new AppError("Missing values", 400)
          }
 
          const productTocreate = {
@@ -137,7 +128,6 @@ export class ProductServices {
    // modifica un producto
    async update(pid, data) {
       try {
-         // delete productReplace._id
          if (!mongoose.Types.ObjectId.isValid(pid)) {
             throw new AppError("Invalid product ID format", 400)
          }
