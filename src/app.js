@@ -51,10 +51,10 @@ async function startServer() {
 
       // rutas
       app.use("/auth/user", authUserRouter)
-      app.use("/user", userRouter)
+      app.use("/api/users", userRouter)
       app.use("/api/session", sessionRouter)
       app.use("/api/notify", notifyRouter)
-      app.use("/api/products", productsRouter)
+      app.use("/api/products", productsRouter)  
       app.use("/api/carts", cartsRouter)
 
       app.listen(PORT, () => console.log(`Entrega1 http://localhost:${PORT}`))
