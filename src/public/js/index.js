@@ -6,33 +6,39 @@ form.addEventListener("submit", async (event) => {
    const input1 = document.getElementById("input-1").value
    const input2 = document.getElementById("input-2").value
 
-   console.log(input1)
-
-   console.log("1")
-
    if (!input1 || !input2) {
-      console.log("2")
-      alert("Debe completar ambos campos")
+      alert("You must complete both fields.")
       return
    }
 
-   if (input1 === input2) {
-      alert("Su contraseña se ha cambiado exitosamente")
-      // acá luego hacés el fetch al backend
-      const res = await fetch("/api/users/reset-password", {
+   if (input1 !== input2) {
+      alert("Passwords do not match")
+      return
+   }
+
+   const params = new URLSearchParams(window.location.search)
+   const token = params.get("token")
+
+   if (!token) {
+      alert("Invalid or non-existent token")
+      return
+   }
+
+   const res = await fetch(
+      `http://localhost:8000/api/users/reset-password/${token}`,
+      {
          method: "POST",
          headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({ password: p1 })
-      })
-
-      const data = await res.json()
-
-      if (res.ok) {
-         alert("Contraseña cambiada")
-      } else {
-         alert(data.error)
+         body: JSON.stringify({ password: input1 })
       }
-   } else {
-      alert("Las contraseñas no coinciden")
+   )
+
+   const data = await res.json()
+
+   if (!res.ok) {
+      alert(data.error || "Error changing password")
+      return
    }
+
+   alert("Password successfully changed")
 })
