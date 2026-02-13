@@ -1,9 +1,13 @@
 import { cartModel } from "../models/carts.model.js"
 
 class CartsDAO {
-   // Solo para ver el carrito
-   async getByIdPopulated(id) {
+   // only to show the user
+   async getByIdByPopulated(id) {
       return await cartModel.findById(id).populate("products.product")
+   }
+
+   async getAll() {
+      return await cartModel.find()
    }
 
    async getById(id) {
@@ -11,8 +15,7 @@ class CartsDAO {
    }
 
    async create(cartData) {
-      const cart = new cartModel(cartData)
-      return await cart.save()
+      return await cartModel.create(cartData)
    }
 
    async update(id, updateData) {
