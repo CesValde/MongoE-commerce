@@ -33,21 +33,26 @@ export const passportCall = (strategy) => {
  */
 export const authorization = (role) => {
    return (req, res, next) => {
-      // const user = req.user
+      const user = req.user
 
-      if (!req.user) {
+      if (!user) {
          return res.redirect("/error")
       }
 
-      if (req.user.role !== role) {
+      if (user.role === "admin") {
+         return next()
+      }
+
+      if (user.role !== role) {
          return res.status(403).json({ error: "Unauthorized" })
       }
-      next()
+
+      return next()
    }
 }
 
 /**
- * Redirige el usuario al hacer login
+ * Redirige el usuario a su perfil al hacer login
  */
 export const redirectAuth = (req, res, next) => {
    const token = req.signedCookies?.currentUser
