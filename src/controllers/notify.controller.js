@@ -1,21 +1,10 @@
-import path from "path"
-import fs from "fs"
-import { fileURLToPath } from "url"
 import { createMailer } from "../config/mailer.js"
 import crypto from "crypto"
 import userServices from "../services/users.service.js"
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-const readTemplate = (nameTemplate) => {
-   const p = path.join(__dirname, "..", "templates", nameTemplate)
-   return fs.readFileSync(p, "utf-8")
-}
-
-// Envía un email simple, fijo y de texto plano a un destinatario hardcodeado.
+// Send a simple, fixed, plain text email to a recipient.
 export const sendMail = async (req, res) => {
-   const { email, first_name, id } = req.user
+   const { email, first_name, _id } = req.user
 
    try {
       const token = crypto.randomBytes(32).toString("hex")
@@ -24,16 +13,15 @@ export const sendMail = async (req, res) => {
          .update(token)
          .digest("hex")
 
-      await userServices.update(id, {
+      await userServices.update(_id, {
          resetPasswordToken: hashedToken,
-         resetPasswordExpires: Date.now() + 60 * 60 * 1000 // 1h
-         //resetPasswordExpires: Date.now() + 2 * 60 * 1000 // 2m
+         resetPasswordExpires: Date.now() + 60 * 60 * 1000 // 1hm
       })
 
-      const resetLink = `http://localhost:8000/api/notify/change-password/${token}`
+      const resetLink = `http://localhost:8000/api/notify/change-password?token=${token}`
       const transporter = createMailer()
 
-      const info = await transporter.sendMail({
+      await transporter.sendMail({
          from: `${process.env.MAIL_USER} "MongoE-commerce"`,
          to: email,
          subject: "Change password",
@@ -45,10 +33,8 @@ export const sendMail = async (req, res) => {
          If you did not request this change, please ignore this message.`
       })
 
-      console.log("Message send:", info.messageId)
       res.json({ status: "ok" })
    } catch (error) {
-      console.error({ error })
       res.status(500).json({
          status: "error",
          message: "The email could not be sent."
@@ -56,49 +42,34 @@ export const sendMail = async (req, res) => {
    }
 }
 
-/*
-// later see if i use it
-export const sendMailBuyConfirm = async (req, res) => {
-   const { to, name = "cliente", product = "Producto" } = req.body
+// send an email with the purchase confirmation
+export const sendBuyConfirmMail = async (user, ticket) => {
+   const transporter = createMailer()
 
-   try {
-      if (!to) {
-         return res
-            .status(400)
-            .json({ error: "El destinatario es Obligatorio" })
-      }
+   const productsText = ticket.products
+      .map(
+         (p) =>
+            `- ${p.title} | quantity: ${p.quantity} | price: $${p.price} | subtotal: $${p.subtotal}`
+      )
+      .join("\n")
 
-      const htmlBase = readTemplate("purchase.html")
-         .replaceAll("{{NOMBRE}}", name)
-         .replaceAll("{{PRODUCTO}}", product)
+   await transporter.sendMail({
+      from: `${process.env.MAIL_USER} "MongoE-commerce"`,
+      to: user.email,
+      subject: "Buy successfully!",
+      text: `Hi ${user.first_name},
 
-      const transporter = createMailer()
-      const info = await transporter.sendMail({
-         from: `${process.env.MAIL_USER} "MongoE-commerce"`,
-         to: to,
-         subject: `Confirmación de Compra ${product}`,
-         html: htmlBase
-         attachments: [
-            {
-               filename: "logo.png",
-               path: path.join(__dirname, "..", "..", "assets", "logo.png"),
-               cid: "logo_cid"
-            },
-            {
-               filename: "manual.pdf",
-               path: path.join(__dirname, "..", "..", "assets", "apunte.pdf")
-            }
-         ] 
-      })
-      console.log("Mensaje Enviado:", info.messageId)
-      res.json({ status: "ok" })
-   } catch (error) {
-      console.error({ error })
-      res.status(500).json({
-         status: "error",
-         message: "No se pudo enviar el Mail"
-      })
-   }
+      Your purchase has been successfully processed.
+
+      Your buy:
+
+      Ticket code: ${ticket.code}
+      Date: ${ticket.date}
+      Total amount: $${ticket.amount}
+
+      Products: ${productsText}
+
+      Thank you for your purchase!.
+      `
+   })
 }
-
-*/
