@@ -12,6 +12,6 @@ router.post("/login", preventAuth, redirectAuth, authUserController.submitLogin)
 
 router.get("/login", preventAuth, authUserController.login)
 
-router.get("/logout", passportCall("jwt"), authUserController.logout)
+router.get("/logout", passportCall("current"), authUserController.logout)
 
 export default router
