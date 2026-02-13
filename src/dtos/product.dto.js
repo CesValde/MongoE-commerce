@@ -8,6 +8,8 @@ class ProductDTO {
          description: product.description,
          code: product.code,
          price: product.price,
+         status: product.status,
+         stock: product.stock,
          category: product.category,
       }
    }
