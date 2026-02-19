@@ -7,15 +7,15 @@ API REST de e-commerce construida con Node.js, Express y MongoDB siguiendo arqui
 ## 🚀 Tecnologías usadas
 
 - ✔️ Node.js
-- ✔ Express
-- ✔ MongoDB + Mongoose (ODM)
-- ✔ JWT para autenticación
-- ✔ Nodemailer para mails
-- ✔ Crypto UUID
-- ✔ Patrones de diseño: DAO / Repository / DTO
-- ✔ Manejo de roles y autorización
-- ✔ Env variables con .env
-- ✔ API REST con paginación
+- ✔️ Express
+- ✔️ MongoDB + Mongoose (ODM)
+- ✔️ JWT para autenticación
+- ✔️ Nodemailer para mails
+- ✔️ Crypto UUID
+- ✔️ Patrones de diseño: DAO / Repository / DTO
+- ✔️ Manejo de roles y autorización
+- ✔️ Env variables con .env
+- ✔️ API REST con paginación
 
 ---
 
@@ -185,6 +185,10 @@ Este backend ofrece una API completa para un e-commerce con:
 
 - Arquitectura profesional escalable
 
-```
+---
 
+**Autor**
+
+```
+Cesar Valderrama - CesValde
 ```
