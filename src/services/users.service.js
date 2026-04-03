@@ -30,7 +30,7 @@ class UserServices {
    async getById(id) {
       try {
          if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw new AppError("Invalid product ID format", 400)
+            throw new AppError("Invalid user ID format", 400)
          }
 
          const user = await userRepository.getById(id)
@@ -76,7 +76,7 @@ class UserServices {
    async update(id, data) {
       try {
          if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw new AppError("Invalid product ID format", 400)
+            throw new AppError("Invalid user ID format", 400)
          }
 
          if (!data || Object.keys(data).length === 0) {
@@ -108,7 +108,7 @@ class UserServices {
    async delete(id) {
       try {
          if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw new AppError("Invalid product ID format", 400)
+            throw new AppError("Invalid user ID format", 400)
          }
 
          const user = await userRepository.delete(id)
