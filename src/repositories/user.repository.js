@@ -25,6 +25,7 @@ class UserRepository {
       return userDAO.delete(id)
    }
 
+   // Method to get a user by their password reset token
    async getByResetToken(token) {
       return userDAO.getByResetToken(token)
    }

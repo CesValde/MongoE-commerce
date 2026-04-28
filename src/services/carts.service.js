@@ -63,6 +63,8 @@ class CartService {
          const cart = await this.getOrCreateCartForUser(userId)
 
          // to use with or without populate
+         // if the product is populated, compare with _id, if not compare with the string value
+         // filter out the product to be removed
          cart.products = cart.products.filter((p) =>
             p.product._id
                ? p.product._id.toString() !== productId

@@ -5,6 +5,7 @@ import * as notifyController from "../controllers/notify.controller.js"
 
 const router = Router()
 
+// send email to change password
 router.get("/mail", passportCall("current"), notifyController.sendMail)
 
 // html changePassword
